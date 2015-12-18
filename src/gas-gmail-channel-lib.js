@@ -46,7 +46,7 @@ var GmailChannel = (function() {
   var DEFAULT = {
     labels: ['inbox', '-trash']
     , dayspan: '365'   // only check in last 365 days
-    , limit: 999       // default max return 999 threads
+    , limit: 500       // default max return 999 threads
     , doneLabel: null
     , res: {}
     , keywords: []
@@ -94,7 +94,7 @@ var GmailChannel = (function() {
     }
     
     var limit = options.limit || DEFAULT.limit
-    if (limit%1 !== 0) throw Error('limit must be integer for GmailChannle! error: limit=' + limit )
+    if (limit%1 !== 0 || limit>500) throw Error('limit must be integer(<500) for GmailChannle! error: limit=' + limit )
     
     var res = options.res || DEFAULT.res
 
