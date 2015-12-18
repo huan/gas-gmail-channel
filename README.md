@@ -5,7 +5,7 @@ Github: https://github.com/zixia/gas-gmail-channel
 
 Run in Google Apps Script, make life easy to classify and process emails in Gmail.
 
-## How to use
+## How to use GmailChannel
 
 Copy & paste the following code to google script editor, then execute to have a look.(you need to wrap the code into a function)
 
@@ -46,7 +46,7 @@ function thirdStep(req, res,next) {
 
 ### Channel
 
-`Channel` is created for filter emails that match specified conditions. After you created a Channel, you can attach `Middleware` to deal with emails from channel.
+`GmailChannel` is created for filter emails that match specified conditions. After you created a Channel, you can attach `Middleware` to deal with emails from channel.
 
 ### Middleware
 
@@ -54,7 +54,8 @@ function thirdStep(req, res,next) {
 
 ```javascript
 function (req, res, next) {
-  // deal with emails
+  var thread = req.thread
+  // deal with emails in thread
 }
 ```
 
