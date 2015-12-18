@@ -44,6 +44,8 @@ function thirdStep(req, res,next) {
 }
 ```
 
+Don't forgot to include GmailChannel library in your code to [enable GmailChannel](#library).
+
 ### Channel
 
 `GmailChannel` is created for filter emails that match specified conditions. After you created a Channel, you can attach `Middleware` to deal with emails from channel.
@@ -63,9 +65,9 @@ function (req, res, next) {
 
 `req.thread` is a [Class GmailThread](https://developers.google.com/apps-script/reference/gmail/gmail-thread) object in GAS(Google Apps Script).
 
-## How to use GmailChannel in your code
+## How to enable GmailChannel in your code<a name="library"></a>
 
-Include GmailChannel library is very easy: just copy/paste the following javascript code to your Code.gs file, then you are ready to use GmailChannel:
+Enable GmailChannel by include library from github. Copy/paste the following javascript code to your Code.gs file, then you are set.
 
 ```javascript
 /**
