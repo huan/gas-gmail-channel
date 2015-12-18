@@ -1,17 +1,15 @@
-# gas-gmail-channel
+# GmailChannel
 Pub/Sub &amp; Middleware framework for easy dealing with Gmails by Channel
 
 Github: https://github.com/zixia/gas-gmail-channel
+
+Run in Google Apps Script, make life easy to classify and process emails in Gmail.
 
 ## How to use
 
 Copy & paste the following code to google script editor, then execute to have a look.(you need to wrap the code into a function)
 
 ```javascript
-if ((typeof GmailChannel)==='undefined') { // GmailChannel Initialization. (only if not initialized yet.)
-  eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/zixia/gas-gmail-channel/master/src/gas-gmail-channel-lib.js').getContentText())
-} // Class GmailChannel is ready for use now!
-
 var theChannel = new GmailChannel({
   keywords: ['the']
   , labels: ['inbox']
@@ -25,17 +23,19 @@ theChannel.use(
   , thirdStep
 )
 
-testChannel.done()
+theChannel.done()
 
 ///////////////////////////////////////////////////
 function firstStep(req, res, next) {
-  Logger.log(req.thread.getFirstMessageSubject())
-  req.data = 'set'
+  Logger.log('Mail Subject: ' 
+             + '[' + req.thread.getFirstMessageSubject() + ']')
+  req.data = 'This data was set in the firstStep'
   next()
 }
 
 function secondStep(req, res, next) {
-  Logger.log('req.data got: ' + req.data)
+  Logger.log('Data got by secondStep: '
+             + '[' + req.data + ']')
   // NO next() here
 }
 
@@ -73,6 +73,7 @@ Include GmailChannel library is very easy: just copy/paste the following javascr
 */
 if ((typeof GmailChannel)==='undefined') { // GmailChannel Initialization. (only if not initialized yet.)
   eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/zixia/gas-gmail-channel/master/src/gas-gmail-channel-lib.js').getContentText())
+  GmailApp.getAliases() // Require permission
 } // Class GmailChannel is ready for use now!
 ```
 
