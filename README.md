@@ -44,6 +44,8 @@ function thirdStep(req, res,next) {
 }
 ```
 
+More examples please have a look at [unite tests](https://github.com/zixia/gas-gmail-channel/blob/master/src/gas-gmail-channel-tests.js) and source code.
+
 Don't forgot to include GmailChannel library in your code to [enable GmailChannel](#library).
 
 ### Channel
