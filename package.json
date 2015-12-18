@@ -1,0 +1,33 @@
+{
+  "name": "gas-gmail-channel"
+  , "version": "0.1.0"
+  , "description": "Pub/Sub & Middleware framework for easy dealing with Gmails by Channel"
+  , "main": "index.js"
+  , "directories": {
+    "doc": "doc"
+  }
+  , "dependencies": {
+  }
+  , "devDependencies": {
+    "node-google-apps-script": "^1.1.3"
+  }
+  , "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+    , "pull": "scripts/pull.sh"
+  }
+  , "repository": {
+    "type": "git"
+    , "url": "git@github.com:zixia/gas-gmail-channel.git"
+  }
+  , "keywords": [
+    "gmail"
+    , "google-apps-script"
+    , "gas"
+    , "channel"
+    , "pub/sub"
+    , "middleware"
+  ]
+  , "author": "Zhuohuan LI <zixia@zixia.net>"
+  , "license": "Apache-2.0"
+  , "homepage": "https://github.com/zixia/gas-gmail-channel"
+}
