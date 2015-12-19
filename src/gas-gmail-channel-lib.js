@@ -228,7 +228,7 @@ var GmailChannel = (function() {
     */
     function getNewThreads(limit) {
       
-      if (!limit) limit = 999
+      if (!limit) limit = 500 // 500 is the max number that gmail permit.
       if (!QUERY_STRING) return []
       
       // search for mails
