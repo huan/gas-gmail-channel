@@ -3,11 +3,11 @@ Pub/Sub &amp; Middleware framework for easy dealing with Gmails by Channel
 
 Github: https://github.com/zixia/gas-gmail-channel
 
-Run in Google Apps Script, make life easy to classify and process emails in Gmail.
+Run in Google Apps Script, make life easier to classify and process emails in Gmail.
 
 ## How to use GmailChannel
 
-Copy & paste the following code to google script editor, then execute to have a look.(you need to wrap the code into a function)
+Copy/Paste the following lines into google script editor, then execute it for testing (you need to put the code into a function).
 
 ```javascript
 var theChannel = new GmailChannel({
@@ -44,17 +44,17 @@ function thirdStep(req, res,next) {
 }
 ```
 
-More examples please have a look at [unite tests](https://github.com/zixia/gas-gmail-channel/blob/master/src/gas-gmail-channel-tests.js) and source code.
+More examples can be found at [unite tests](https://github.com/zixia/gas-gmail-channel/blob/master/src/gas-gmail-channel-tests.js) and source code.
 
 Don't forgot to include GmailChannel library in your code to [enable GmailChannel](#library).
 
 ### Channel
 
-`GmailChannel` is created for filter emails that match specified conditions. After you created a Channel, you can attach `Middleware` to deal with emails from channel.
+`GmailChannel` is created to filter emails that match specific conditions. After you created a Channel, you can attach `Middleware` to handle emails from channel.
 
 ### Middleware
 
-`Middleware` is a set of functions that do the work. In GmailChannel, the middleware is very like `Express`.
+`Middleware` is a set of functions that do the work. In GmailChannel, the middleware works very similar as `Express`.
 
 ```javascript
 function (req, res, next) {
@@ -69,7 +69,7 @@ function (req, res, next) {
 
 ## How to enable GmailChannel in your code<a name="library"></a>
 
-Enable GmailChannel by include library from github. Copy/paste the following javascript code to your Code.gs file, then you are set.
+Enable GmailChannel by including library from github. Copy/paste the following javascript code into your Code.gs file, then you are set.
 
 ```javascript
 /**
