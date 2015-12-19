@@ -10,20 +10,21 @@ Run in Google Apps Script, make life easier to classify and process emails in Gm
 Copy/Paste the following lines into google script editor, then execute it for testing (you need to put the code into a function).
 
 ```javascript
-var theChannel = new GmailChannel({
-  keywords: ['the']
+var myChannel = new GmailChannel({
+  name: 'My Channel'
+  , keywords: ['the']
   , labels: ['inbox']
   , limit: 1
   , doneLabel: 'OutOfGmailChannel'
 })
 
-theChannel.use(
+myChannel.use(
   firstStep
   , secondStep
   , thirdStep
 )
 
-theChannel.done()
+myChannel.done()
 
 ///////////////////////////////////////////////////
 function firstStep(req, res, next) {
@@ -63,9 +64,17 @@ function (req, res, next) {
 }
 ```
 
-### `req.thread`: Email thread filtered out by Channel
+### `GmailChannel.getName()`
 
-`req.thread` is a [Class GmailThread](https://developers.google.com/apps-script/reference/gmail/gmail-thread) object in GAS(Google Apps Script).
+instance method `getName()` will return Channel Name for current instance.
+
+### `req.getThread()`: Email thread filtered out by Channel
+
+method `req.getThread()` return a [Class GmailThread](https://developers.google.com/apps-script/reference/gmail/gmail-thread) object in GAS(Google Apps Script).
+
+### `req.getChannelName()`: Channel Name of req
+
+method `req.getChannelName()` will return the current channel name.
 
 ## How to enable GmailChannel in your code<a name="library"></a>
 
