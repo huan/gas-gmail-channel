@@ -109,4 +109,15 @@ function gmailChannelTestRunner() {
     t.equal(REQ_DATA_GOTTEN, REQ_DATA_EXPECTED, 'req.data right')
     t.equal(RES_DATA_GOTTEN, RES_DATA_EXPECTED, 'res.data right')
   })
+  
+  test('Class Constructor', function (t) {
+    var EXPECTED_NAME = 'test channel'
+    
+    var c = new GmailChannel({
+      name: EXPECTED_NAME
+    })
+    
+    t.equal(c.getName(), EXPECTED_NAME, 'set name right')
+  })
+  
 }

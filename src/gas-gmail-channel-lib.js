@@ -44,7 +44,8 @@ var GmailChannel = (function() {
   var VERSION = '0.1.0'
   
   var DEFAULT = {
-    labels: ['inbox', '-trash']
+    name: 'GmailChannel v' + VERSION
+    , labels: ['inbox', '-trash']
     , dayspan: '365'   // only check in last 365 days
     , limit: 500       // default max return 999 threads
     , doneLabel: null
@@ -58,6 +59,7 @@ var GmailChannel = (function() {
   * ------------------
   *
   * @param object optoins
+  *    options.name string Channel Name
   *    options.labels array gmail channel labels. default: label:inbox label:unread -label:trash
   *    optoins.keywords array gmail search keywords
   *
@@ -86,16 +88,17 @@ var GmailChannel = (function() {
     } else {
       doneLabel = options.doneLabel
     }
-    
+  
     var labels = options.labels || DEFAULT.labels
     var keywords = options.keywords || DEFAULT.keywords
     if (!(labels instanceof Array) || !(keywords instanceof Array)) {
       throw Error('options.keywords or options.labels must be array for GmailChannel!')
     }
-    
+  
     var limit = options.limit || DEFAULT.limit
-    if (limit%1 !== 0 || limit>500) throw Error('limit must be integer(<500) for GmailChannle! error: limit=' + limit )
-    
+    if (limit%1 !== 0 || limit>500) throw Error('limit must be integer(<500) for GmailChannle! error: limit=' + limit );
+  
+    var name = options.name || DEFAULT.name
     var res = options.res || DEFAULT.res
 
     
@@ -140,7 +143,8 @@ var GmailChannel = (function() {
     } else {
       DONE_LABEL = null
     }
-
+  
+    var NAME = name
     var LIMIT = limit
     var QUERY_STRING = queryString
     var RES = res
@@ -157,6 +161,7 @@ var GmailChannel = (function() {
     this.use = use
     this.done = done
     
+    this.getName = getName
     this.getQueryString = function () { return QUERY_STRING }
     this.getMiddlewares = function () { return MIDDLEWARES }
     
@@ -195,7 +200,9 @@ var GmailChannel = (function() {
         
         var res = RES
         var req = {
-          thread: mailThreads[i]
+          getChannelName: getName()
+          , getThread: (function (t) { return function () { return t } })(mailThreads[i]) // closure for the furture possible run in nodejs, because of async call back
+//          thread: mailThreads[i] // Deprecated
         }        
         
         for (var j=0; j<MIDDLEWARES.length; j++) {
@@ -220,6 +227,8 @@ var GmailChannel = (function() {
       } // END for loop of mailThreads 
       
     }
+  
+    function getName() { return NAME }
     
     /**
     *
