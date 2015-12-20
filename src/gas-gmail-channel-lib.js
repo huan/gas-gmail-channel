@@ -174,6 +174,8 @@ var GmailChannel = (function() {
     
     function use(middleware) {
             
+      if (middleware instanceof Array) return middleware.map(function (m) { return use(m) })
+      
       if (!(middleware instanceof Function)) throw Error('must use function(s) for middleware! error[' + middleware + ']')
       
       MIDDLEWARES.push(middleware)
@@ -183,10 +185,8 @@ var GmailChannel = (function() {
       * in case of use(fn1, fn2....)
       *
       */
-      var moreMiddlewares = Array.prototype.slice.call(arguments, 1)
-            
-      if (moreMiddlewares.length > 0) {
-        moreMiddlewares.map(function (m) { return use(m) })
+      if (arguments.length>1) {
+        return Array.prototype.slice.call(arguments, 1).map(function (m) { return use(m) })
       }
       
       return true

@@ -15,16 +15,17 @@ function gmailChannelTestRunner() {
     eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/zixia/gas-gmail-channel/master/src/gas-gmail-channel-lib.js').getContentText())
   } // Class GmailChannel is ready for use now!
 
-  var testChannel = new GmailChannel({
+  var myChannel = new GmailChannel({
+    name: 'myChannel'
     keywords: ['the']
     , labels: ['inbox']
     , limit: 1
     , doneLabel: 'OutOfGmailChannel'
   })
 
-  testChannel.use(
+  myChannel.use(
     function (req, res, next) {
-      Logger.log(req.thread.getFirstMessageSubject())
+      Logger.log(req.getThread().getFirstMessageSubject())
       req.data = 'set'
       next()
     }
@@ -37,7 +38,7 @@ function gmailChannelTestRunner() {
     }
   )
   
-  testChannel.done()
+  myChannel.done()
   ```
   */
   
@@ -51,73 +52,119 @@ function gmailChannelTestRunner() {
     eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/zixia/gas-gmail-channel/master/src/gas-gmail-channel-lib.js').getContentText())
   } // Class GmailChannel is ready for use now!
 
-  test('Query string', function (t) {
-    
-    var EXPECTED_QUERY_STRING = ' newer_than:1d -label:OutOfGmailChannel 融资申请 最简单的创业计划书 '
-    + '-abcdefghijklmnopqrstuvwxyz -label:trash'
-    var testChannel = new GmailChannel({
-      keywords: [
-        '融资申请'
-        , '最简单的创业计划书'
-        , '-abcdefghijklmnopqrstuvwxyz'
-      ]
-      , labels: [
-        ''
-        , '-' + 'trash'
-      ]
-      , dayspan: '1' 
-      , query: ''
-      , doneLabel: 'OutOfGmailChannel'
-    })
-    t.equal(testChannel.getQueryString(), EXPECTED_QUERY_STRING, 'query string built')
-    
-  })
   
-  test('Middleware chains', function (t) {
-    var EXPECTED_MIDDLEWARES_NUM = 3
-    var RES_DATA_EXPECTED = 'res data set in constructor'
-    var RES_DATA_GOTTEN = ''
-    var REQ_DATA_EXPECTED = 'req data set set in middleware'
-    var REQ_DATA_GOTTEN = ''
-    var COUNTER = 0
-    var testChannel = new GmailChannel({
-      limit: 1
-      , res: {
-        data: RES_DATA_EXPECTED
-      }
-    })    
-    testChannel.use(
-      function (req, res, next) {
+  testBasic()
+  testMiddleware()
+  
+  
+  return test.finish()
+  
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  function testBasic() {
+    
+    test('Query string', function (t) {
+      
+      var EXPECTED_QUERY_STRING = ' newer_than:1d -label:OutOfGmailChannel 融资申请 最简单的创业计划书 '
+      + '-abcdefghijklmnopqrstuvwxyz -label:trash'
+      var testChannel = new GmailChannel({
+        keywords: [
+          '融资申请'
+          , '最简单的创业计划书'
+          , '-abcdefghijklmnopqrstuvwxyz'
+        ]
+        , labels: [
+          ''
+          , '-' + 'trash'
+        ]
+        , dayspan: '1' 
+        , query: ''
+        , doneLabel: 'OutOfGmailChannel'
+      })
+      t.equal(testChannel.getQueryString(), EXPECTED_QUERY_STRING, 'query string built')
+      
+    })
+    
+    test('Class Constructor', function (t) {
+      var EXPECTED_NAME = 'test channel'
+      
+      var c = new GmailChannel({
+        name: EXPECTED_NAME
+      })
+      
+      t.equal(c.getName(), EXPECTED_NAME, 'set name right')
+    })
+
+  }
+  
+  function testMiddleware() {
+    test('Middleware chains', function (t) {
+      var EXPECTED_MIDDLEWARES_NUM = 3
+      var RES_DATA_EXPECTED = 'res data set in constructor'
+      var REQ_DATA_EXPECTED = 'req data set set in middleware'
+      var RES_DATA_GOTTEN = ''
+      var REQ_DATA_GOTTEN = ''
+      
+      var COUNTER = 0
+      var testChannel = new GmailChannel({
+        limit: 1
+        , res: {
+          data: RES_DATA_EXPECTED
+        }
+      })    
+      testChannel.use(
+        step1
+        , step2
+        , step3
+      )
+      
+      function step1(req, res, next) {
         req.data = REQ_DATA_EXPECTED
         COUNTER++;
         next()
       }
-      , function (req, res, next) {
+      function step2(req, res, next) {
         REQ_DATA_GOTTEN = req.data
         RES_DATA_GOTTEN = res.data
         COUNTER++;
         // NO next() here!
       }
-      , function (req, res, next) {
+      function step3(req, res, next) {
         COUNTER++;
         next()
       }
-    )
-    t.equal(testChannel.getMiddlewares().length, EXPECTED_MIDDLEWARES_NUM, 'num of middlewares function is 3')
-    testChannel.done()
-    t.equal(COUNTER, 2, '1 next to 2, but 2 not next to 3')
-    t.equal(REQ_DATA_GOTTEN, REQ_DATA_EXPECTED, 'req.data right')
-    t.equal(RES_DATA_GOTTEN, RES_DATA_EXPECTED, 'res.data right')
-  })
-  
-  test('Class Constructor', function (t) {
-    var EXPECTED_NAME = 'test channel'
-    
-    var c = new GmailChannel({
-      name: EXPECTED_NAME
+      
+      t.equal(testChannel.getMiddlewares().length, EXPECTED_MIDDLEWARES_NUM, 'num of middlewares function is 3')
+      testChannel.done()
+      t.equal(COUNTER, 2, '1 next to 2, but 2 not next to 3')
+      t.equal(REQ_DATA_GOTTEN, REQ_DATA_EXPECTED, 'req.data right')
+      t.equal(RES_DATA_GOTTEN, RES_DATA_EXPECTED, 'res.data right')
+      
+      
+      COUNTER = 0
+      RES_DATA_GOTTEN = ''
+      REQ_DATA_GOTTEN = ''
+      var c2 = new GmailChannel({
+        limit: 1
+        , res: {
+          data: RES_DATA_EXPECTED
+        }
+      })    
+      var mws = [
+        step1
+        , step2
+        , step3
+      ]      
+      c2.use(mws)
+      t.equal(c2.getMiddlewares().length, EXPECTED_MIDDLEWARES_NUM, 'use(array): num of middlewares function is 3')
+      c2.done()
+      t.equal(COUNTER, 2, 'use(array): 1 next to 2, but 2 not next to 3')
+      t.equal(REQ_DATA_GOTTEN, REQ_DATA_EXPECTED, 'use(array): req.data right')
+      t.equal(RES_DATA_GOTTEN, RES_DATA_EXPECTED, 'use(array): res.data right')
+      
     })
-    
-    t.equal(c.getName(), EXPECTED_NAME, 'set name right')
-  })
+  }
+  
   
 }
