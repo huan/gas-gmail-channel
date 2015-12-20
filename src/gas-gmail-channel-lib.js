@@ -200,7 +200,7 @@ var GmailChannel = (function() {
         
         var res = RES
         var req = {
-          getChannelName: getName()
+          getChannelName: getName
           , getThread: (function (t) { return function () { return t } })(mailThreads[i]) // closure for the furture possible run in nodejs, because of async call back
 //          thread: mailThreads[i] // Deprecated
         }        
