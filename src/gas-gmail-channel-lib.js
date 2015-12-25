@@ -14,14 +14,14 @@ var GmailChannel = (function() {
   if ((typeof GmailChannel)==='undefined') { // GmailChannel Initialization. (only if not initialized yet.)
     eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/zixia/gas-gmail-channel/master/src/gas-gmail-channel-lib.js').getContentText())
   } // Class GmailChannel is ready for use now!
-
+  
   var testChannel = new GmailChannel({
     keywords: ['the', '-abcdefghijilmn']
     , labels: ['inbox', '-trash']
     , limit: 1
     , doneLabel: 'OutOfGmailChannel'
   })
-
+  
   testChannel.use(
     function (req, res, next) {
       Logger.log(req.thread.getFirstMessageSubject())
@@ -37,10 +37,12 @@ var GmailChannel = (function() {
     }
   )
   
-  testChannel.done()
+  testChannel.done(function(req, res, next) {
+    Logger.log('finalized all middlewares')
+  })
   ```
   */
-
+  
   var VERSION = '0.1.0'
   
   var DEFAULT = {
@@ -49,8 +51,8 @@ var GmailChannel = (function() {
     , dayspan: '365'   // only check in last 365 days
     , limit: 500       // default max return 999 threads
     , doneLabel: null
-    , res: {}
     , keywords: []
+    , res: JSON.parse('{}') // use {} directory will cause script editor indient error???
   }
   
   /************************************************************************************************
@@ -70,11 +72,16 @@ var GmailChannel = (function() {
   *    options.doneLabel message labeled with {{doneLabel}} will be ignored
   */
   var GmailChannel = function (options) {
-       
+    
     if (!options) throw Error('options must be defined for GmailChannel!')
     
     var dayspan = options.dayspan || DEFAULT.dayspan
-
+    var labels = options.labels || DEFAULT.labels
+    var name = options.name || DEFAULT.name
+    var res = options.res || DEFAULT.res   
+    var keywords = options.keywords || DEFAULT.keywords    
+    var limit = options.limit || DEFAULT.limit
+    
     /**
     *
     * 1. if we don't set doneLabel, then it should be the default label name.
@@ -84,28 +91,26 @@ var GmailChannel = (function() {
     *
     */
     if ((typeof options.doneLabel)==='undefined') {
-      var doneLabel = options.doneLabel || DEFAULT.doneLabel
-    } else {
-      doneLabel = options.doneLabel
-    }
-  
-    var labels = options.labels || DEFAULT.labels
-    var keywords = options.keywords || DEFAULT.keywords
-    if (!(labels instanceof Array) || !(keywords instanceof Array)) {
-      throw Error('options.keywords or options.labels must be array for GmailChannel!')
-    }
-  
-    var limit = options.limit || DEFAULT.limit
+      var doneLabel = DEFAULT.doneLabel
+      } else {
+        doneLabel = options.doneLabel
+      }
+    
+    /**
+    *
+    * validation options input
+    *
+    */
     if (limit%1 !== 0 || limit>500) throw Error('limit must be integer(<500) for GmailChannle! error: limit=' + limit );
-  
-    var name = options.name || DEFAULT.name
-    var res = options.res || DEFAULT.res
-
+    
+    if (!(labels instanceof Array) || !(keywords instanceof Array)) throw Error('options.keywords or options.labels must be array for GmailChannel!')
+    
+    
     
     /////////////////////////////////////////////////////
     //
     // queryString start building. to filter out email
-
+    
     // 1. query
     var queryString  = options.query || ''
     // 2. timespan
@@ -114,7 +119,7 @@ var GmailChannel = (function() {
     if (doneLabel) queryString += ' ' + '-label:' + doneLabel
     // 4. keywords
     keywords.forEach(function (k) {
-        queryString += ' ' + k
+      queryString += ' ' + k
     })
     // 5. labels
     labels.forEach(function (l) {
@@ -127,29 +132,29 @@ var GmailChannel = (function() {
         queryString += ' ' + 'label:' + l
       }
     })
-
+    
     // queryString has been built.
     //
     ///////////////////////////////////////////////////////
     
-
+    
     ///////////////////////////////////////////////////////
     //
     // UPPER_CASE varibles for quota in instance methods
-
+    
     if (doneLabel) {
       var DONE_LABEL = GmailApp.getUserLabelByName(doneLabel)
       if (!DONE_LABEL) DONE_LABEL = GmailApp.createLabel(doneLabel)
     } else {
       DONE_LABEL = null
     }
-  
+    
     var NAME = name
     var LIMIT = limit
     var QUERY_STRING = queryString
     var RES = res
     var MIDDLEWARES = [] // for use() use
-
+    
     // UPPER_CASE variables set
     //
     ///////////////////////////////////////////////////////
@@ -157,7 +162,7 @@ var GmailChannel = (function() {
     /**
     * Instance of this
     */
-
+    
     this.use = use
     this.done = done
     
@@ -167,13 +172,13 @@ var GmailChannel = (function() {
     
     return this
     
-
+    
     ////////////////////////////////////////////////////////
     //
     // Instance Methods
     
     function use(middleware) {
-            
+      
       if (middleware instanceof Array) return middleware.map(function (m) { return use(m) })
       
       if (!(middleware instanceof Function)) throw Error('must use function(s) for middleware! error[' + middleware + ']')
@@ -192,28 +197,58 @@ var GmailChannel = (function() {
       return true
     }
     
-    function done() {
-            
+    /**
+    *
+    * Run all middlewares for each thread, then call finallCallback(if specified)
+    *
+    * @param <Function> finalCallback 
+    *   finalCallback will be called at the end of all middleware had ran.
+    *   because middleware could be terminated at the middle, the lastest one could not know what happend.
+    *
+    */
+    function done(finalCallback) {
+      
+      if (finalCallback && (!finalCallback instanceof Function)) throw Error('done need a function param to be finalCallback')
+      
       var mailThreads = getNewThreads(LIMIT)
+      
+      var res, req
       
       for (var i=0; i<mailThreads.length; i++) {
         
-        var res = RES
-        var req = {
+        /**
+        *
+        * re-init res & req
+        *
+        */
+        res = {}
+        copyKeys(res, RES)
+        
+        req = {
           getChannelName: getName
           , getThread: (function (t) { return function () { return t } })(mailThreads[i]) // closure for the furture possible run in nodejs, because of async call back
-//          thread: mailThreads[i] // Deprecated
+          , errors: []
+          // , thread: mailThreads[i] // Deprecated
         }        
+        
         
         for (var j=0; j<MIDDLEWARES.length; j++) {
           
           var middleware = MIDDLEWARES[j]
           
           var isNextCalled = false
+          var error = undefined
           
-          middleware(req, res, function () {
-            isNextCalled = true
-          })
+          try {
+            middleware(req, res, function (err) {
+              isNextCalled = true
+              error = err
+            })
+          } catch (e) {
+            error = e
+          }
+          
+          if (error) req.errors.push(error)
           
           if (!isNextCalled) {
             // loop end, because middleware did not call next
@@ -222,12 +257,14 @@ var GmailChannel = (function() {
           
         } // END for loop of MIDDLEWARES
         
-        if (DONE_LABEL) mailThreads[i].addLabel(DONE_LABEL)
+        if (finalCallback) finalCallback(req, res, function (err) { } )
+        
+        if (DONE_LABEL) mailThreads[i].addLabel(DONE_LABEL);
         
       } // END for loop of mailThreads 
       
     }
-  
+    
     function getName() { return NAME }
     
     /**
@@ -252,6 +289,7 @@ var GmailChannel = (function() {
   */
   
   GmailChannel.getVersion = getVersion
+  GmailChannel.copyKeys = copyKeys
   
   return GmailChannel
   
@@ -264,6 +302,12 @@ var GmailChannel = (function() {
   
   function getVersion() {
     return VERSION
+  }
+  
+  function copyKeys(destObj, srcObj) {
+    for (var key in srcObj) {
+      destObj[key] = srcObj[key]
+    }
   }
   
 }())

@@ -49,6 +49,8 @@ More examples can be found at [unite tests](https://github.com/zixia/gas-gmail-c
 
 Don't forgot to include GmailChannel library in your code to [enable GmailChannel](#library).
 
+Script editor - https://script.google.com/a/zixia.net/macros/d/Mta4oea1VMIugfSGRo4QrAnKRT9d30hqB/edit?uiv=2&mid=ACjPJvGt4gnXjJwXnToB0jIMEbSvqKUF6vH-uq-m59SqnjXqTQ03NDn_khlNE6ha_mPnrOAYEnyFk80nHYmt_hppO3AgDkO_vVLrYJXzcPPagwRromd0znfLreNFAu4p0rYTC-Jlo-sAKOM
+
 ### Channel
 
 `GmailChannel` is created to filter emails that match specific conditions. After you created a Channel, you can attach `Middleware` to handle emails from channel.

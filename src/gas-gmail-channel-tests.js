@@ -95,7 +95,19 @@ function gmailChannelTestRunner() {
       
       t.equal(c.getName(), EXPECTED_NAME, 'set name right')
     })
-
+    
+    test('Copy Object', function (t) {
+      var SRC_OBJ = {a:1, b:2}
+      var DEST_OBJ = {}
+      
+      GmailChannel.copyKeys(DEST_OBJ, SRC_OBJ)
+      
+      t.ok(SRC_OBJ!=DEST_OBJ, 'SRC_OBJ is not reference of DEST_OBJ')
+      t.deepEqual(SRC_OBJ, DEST_OBJ, 'SRC_OBJ equal to DEST_OBJ')
+      
+      DEST_OBJ = SRC_OBJ
+      t.equal(SRC_OBJ, DEST_OBJ, 'SRC_OBJ is referenceing to DEST_OBJ')
+    })
   }
   
   function testMiddleware() {
@@ -105,6 +117,9 @@ function gmailChannelTestRunner() {
       var REQ_DATA_EXPECTED = 'req data set set in middleware'
       var RES_DATA_GOTTEN = ''
       var REQ_DATA_GOTTEN = ''
+
+      var EXPECTED_ERROR_NUM = 1
+      var EXPECTED_ERROR_MSG = 'error1'
       
       var COUNTER = 0
       var testChannel = new GmailChannel({
@@ -122,7 +137,7 @@ function gmailChannelTestRunner() {
       function step1(req, res, next) {
         req.data = REQ_DATA_EXPECTED
         COUNTER++;
-        next()
+        next(EXPECTED_ERROR_MSG)
       }
       function step2(req, res, next) {
         REQ_DATA_GOTTEN = req.data
@@ -136,11 +151,18 @@ function gmailChannelTestRunner() {
       }
       
       t.equal(testChannel.getMiddlewares().length, EXPECTED_MIDDLEWARES_NUM, 'num of middlewares function is 3')
-      testChannel.done()
+      
+      var errNum, errMsg
+      testChannel.done(function (req, res, next) {
+        errNum = req.errors.length
+        errMsg = req.errors[0]
+      })
+      t.equal(errNum, EXPECTED_ERROR_NUM, 'finallCallback got middleware error number')
+      t.equal(errMsg, EXPECTED_ERROR_MSG, 'finallCallback got middleware error message')
+      
       t.equal(COUNTER, 2, '1 next to 2, but 2 not next to 3')
       t.equal(REQ_DATA_GOTTEN, REQ_DATA_EXPECTED, 'req.data right')
       t.equal(RES_DATA_GOTTEN, RES_DATA_EXPECTED, 'res.data right')
-      
       
       COUNTER = 0
       RES_DATA_GOTTEN = ''
