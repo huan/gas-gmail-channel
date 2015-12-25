@@ -190,6 +190,7 @@ The GmailChannel source code repository is hosted on GitHub. There you can file 
 ### v0.2.0 (December 25, 2015)
 * add done(finalizeCallback)
 * bug fix
+* add document
 
 ### v0.1.0 (December 18, 2015)
 * Initial commit
