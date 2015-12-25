@@ -1,5 +1,5 @@
 # GmailChannel
-Pub/Sub &amp; Middleware framework for easy dealing with Gmails by Channel
+Pub/Sub &amp; Middleware framework for easy dealing with Gmails defined by Channel
 
 Github: https://github.com/zixia/gas-gmail-channel
 
@@ -24,7 +24,10 @@ myChannel.use(
   , thirdStep
 )
 
-myChannel.done()
+myChannel.done(function(req, res, next) {
+  Logger.log('finalize after middlewares')
+})
+
 
 ///////////////////////////////////////////////////
 function firstStep(req, res, next) {
@@ -53,11 +56,56 @@ Script editor - https://script.google.com/a/zixia.net/macros/d/Mta4oea1VMIugfSGR
 
 ### Channel
 
-`GmailChannel` is created to filter emails that match specific conditions. After you created a Channel, you can attach `Middleware` to handle emails from channel.
+`GmailChannel` is defined to filter emails that match specific conditions. After you created a Channel, you can attach `Middleware` to handle emails from that channel.
+
+#### `GmailChannel.getName()`
+
+instance method `getName()` will return Channel Name for current instance.
+
+#### `use()`: chain middlewares
+
+`use()` is used to define which middleware function to be used.
+
+the param of use() could be:
+
+1. a single function 
+2. a function list
+3. a array of functions
+
+all the functions as middleware will be executed in order.
+
+```javascript
+testChannel.use(
+  function (req, res, next) {
+    Logger.log(req.thread.getFirstMessageSubject())
+    req.data = 'set'
+    next()
+  }
+  , function (req, res, next) {
+    Logger.log('req.data got: ' + req.data)
+    // NO next() here
+  }
+  , function (req, res,next) {
+    throw Error('should not run to here')
+  }
+)
+```
+
+#### `done()`: run and finalize
+
+`done()` is used to start run all middlewares, then run a function to finalize(if specified).
+
+the param of done() should be a function, and the params as same as middleware.
+
+```javascript
+myChannel.done(function(req, res, next) {
+  Logger.log('finalize after middlewares')
+})
+```
 
 ### Middleware
 
-`Middleware` is a set of functions that do the work. In GmailChannel, the middleware works very similar as `Express`.
+`Middleware` is a functions that do the work. In GmailChannel, the middleware works very similar like it in `Express`.
 
 ```javascript
 function (req, res, next) {
@@ -66,17 +114,29 @@ function (req, res, next) {
 }
 ```
 
-### `GmailChannel.getName()`
-
-instance method `getName()` will return Channel Name for current instance.
-
-### `req.getThread()`: Email thread filtered out by Channel
+#### `req.getThread()`: Email thread filtered out by Channel
 
 method `req.getThread()` return a [Class GmailThread](https://developers.google.com/apps-script/reference/gmail/gmail-thread) object in GAS(Google Apps Script).
 
-### `req.getChannelName()`: Channel Name of req
+#### `req.getChannelName()`: Channel Name of req
 
 method `req.getChannelName()` will return the current channel name.
+
+#### `req.errors`: Errors from middlewares
+
+req.errors is a array, which used to store middle errors.
+
+If a middleware throws a exception, or called next(err) with `err` param, then the error of exception, or the err param of next function, will be stored in req.errors.
+
+```javascript
+myChannel.done(function(req, res, next) {
+  Logger.log('there are '
+    + req.errors.length
+    + ' errors total. they are: '
+    + req.errors.join(',')
+    + '.'
+})
+```
 
 ## How to enable GmailChannel in your code<a name="library"></a>
 
@@ -98,6 +158,10 @@ if ((typeof GmailChannel)==='undefined') { // GmailChannel Initialization. (only
 The GmailChannel source code repository is hosted on GitHub. There you can file bugs on the issue tracker or submit tested pull requests for review. ( https://github.com/zixia/gas-gmail-channel/issues )
 
 ## Version history
+
+### v0.2.0 (December 25, 2015)
+* add done(finalizeCallback)
+* bug fix
 
 ### v0.1.0 (December 18, 2015)
 * Initial commit
