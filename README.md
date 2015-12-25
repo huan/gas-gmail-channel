@@ -1,5 +1,5 @@
 # GmailChannel
-Pub/Sub &amp; Middleware framework for easy dealing with Gmails defined by Channel
+Pub/Sub &amp; Middleware framework for easy dealing with Gmails classified by Channel
 
 Github: https://github.com/zixia/gas-gmail-channel
 
@@ -105,7 +105,7 @@ myChannel.done(function(req, res, next) {
 
 ### Middleware
 
-`Middleware` is a functions that do the work. In GmailChannel, the middleware works very similar like it in `Express`.
+`Middleware` is a functions that do the work. In GmailChannel, the middleware works very similar like it in [Express](http://expressjs.com/en/guide/using-middleware.html)(There's also a good article [here](https://stormpath.com/blog/how-to-write-middleware-for-express-apps/)).
 
 ```javascript
 function (req, res, next) {
