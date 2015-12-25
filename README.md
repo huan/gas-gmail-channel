@@ -58,6 +58,34 @@ Script editor - https://script.google.com/a/zixia.net/macros/d/Mta4oea1VMIugfSGR
 
 `GmailChannel` is defined to filter emails that match specific conditions. After you created a Channel, you can attach `Middleware` to handle emails from that channel.
 
+To create a new GmailChannel, just new one:
+
+```javascript
+var myChannel = new GmailChannel({
+  name: 'MyTestChannel'
+  keywords: ['the', '-abcdefghijilmn']
+  , labels: ['inbox', '-trash']
+  , limit: 1
+  , dayspan: 1
+  , doneLabel: 'OutOfGmailChannel'
+  , res: {
+    data: 'used by middlewares'
+  }
+})
+```
+
+About the params:
+
+1. name <string>: Channel Name
+1. keywords <array>: The keywords that email should include('-keyword' means NOT include)
+1. labels <array>: The labels that email should be labeled('-label' means NOT labeled)
+1. limit <Integer>: Max number of email threads that channel will process(maximum 500, which is a gmail limitation)
+1. dayspan <Integer>: Only process emails in the past `dayspan` days. (default 365)
+1. doneLabel <string>: GmailChannel will only get out the emails without the `doneLabel`, and label them as `doneLabel` after processed them.
+1. res <object>: This object will be accessable in the middleware as `res` param.
+
+That's all.
+
 #### `GmailChannel.getName()`
 
 instance method `getName()` will return Channel Name for current instance.
