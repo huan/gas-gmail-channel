@@ -127,11 +127,11 @@ myChannel.use(
 )
 ```
 
-#### `done()`: run and finalize
+#### `done(cb)`: run and finalize
 
-`done()` is used to start run all middlewares, then run a function to finalize(if specified).
+`done(cb)` is used to start run all middlewares, then run a function to finalize(if specified).
 
-the param of done() should be a function, and the params as same as middleware.
+The parameter `cb` is optional, should be a middleware function, to finalize the loop. only one parameter is permited.
 
 ```javascript
 myChannel.done(function(req, res, next) {
