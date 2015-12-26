@@ -82,7 +82,9 @@ About the parameters of constructor:
 1. `limit`: Max number of email threads that channel will process(maximum 500, which is a gmail limitation)
 1. `dayspan`: Only process emails in the past `dayspan` days. (default 365)
 1. `doneLabel`: GmailChannel will only get out the emails without the `doneLabel`, and label them as `doneLabel` after processed them.
-1. `res`: This object will be accessable in the middleware as `res` param.
+  - DEFAULT: `OutOfGmailChannel`
+  - set to `null` to DISABLE it
+1. `res`: You can set it to anything for later use. This object will be accessable in the middleware as `res` parameter.
 
 That's all.
 
