@@ -111,7 +111,7 @@ the param of use() could be:
 all the functions as middleware will be executed in order.
 
 ```javascript
-testChannel.use(
+myChannel.use(
   function (req, res, next) {
     Logger.log(req.thread.getFirstMessageSubject())
     req.data = 'set'
