@@ -76,15 +76,21 @@ var myChannel = new GmailChannel({
 
 About the parameters of constructor:
 
-1. `name`: Channel Name
-1. `keywords`: The keywords that email should include('-keyword' means NOT include)
-1. `labels`: The labels that email should be labeled('-label' means NOT labeled)
-1. `limit`: Max number of email threads that channel will process(maximum 500, which is a gmail limitation)
-1. `dayspan`: Only process emails in the past `dayspan` days. (default 365)
+1. `name`: String. Channel Name. 
+  - DEFAULT: `GmailChannel vVERSION`
+1. `keywords`: Array. The keywords that email should include('-keyword' means NOT include). 
+  - DEFAULT: []
+1. `labels`: Array. The labels that email should be labeled('-label' means NOT labeled).
+  - DEFAULT: ['inbox', '-trash']
+1. `limit`: Max number of email threads that channel will process. 
+  - DEFAULT: 500(maximum of gmail limitation)
+1. `dayspan`: Only process emails in the past `dayspan` days. 
+  - DEFAULT: 365
 1. `doneLabel`: GmailChannel will only get out the emails without the `doneLabel`, and label them as `doneLabel` after processed them.
   - DEFAULT: `OutOfGmailChannel`
   - set to `null` to DISABLE it
 1. `res`: You can set it to anything for later use. This object will be accessable in the middleware as `res` parameter.
+  - DEFAULT: {}
 
 That's all.
 
