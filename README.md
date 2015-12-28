@@ -191,7 +191,7 @@ var myChannel = new GmailChannel({
 
 #### `next(err)`: call this to let the middleware chain continue.
 
-If a middleware called `next()`, then the next middleware will be called after this middleware return, 
+If a middleware called `next()`, then the next middleware will be executed after this middleware return, 
 
 If `next()` is not called by a middleware, then the other middlewares will not be executed, they will all be skipped.
 
