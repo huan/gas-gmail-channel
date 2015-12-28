@@ -1,5 +1,5 @@
 # GmailChannel
-Pub/Sub &amp; Middleware framework for easy dealing with Gmails classified by Channel
+Pub/Sub &amp; Middleware framework for easy dealing with Gmails by Channel
 
 Github: https://github.com/zixia/gas-gmail-channel
 
