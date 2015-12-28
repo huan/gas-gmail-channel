@@ -141,12 +141,13 @@ myChannel.done(function(req, res, next) {
 
 ### Middleware
 
-`Middleware` is a functions that do the work. In GmailChannel, the middleware works very similar like it in [Express](http://expressjs.com/en/guide/using-middleware.html)(There's also a good article [here](https://stormpath.com/blog/how-to-write-middleware-for-express-apps/)).
+`Middleware` is a function that does the work. In GmailChannel, the middleware works very similar like [Express](http://expressjs.com/en/guide/using-middleware.html)(There's also a good article [here](https://stormpath.com/blog/how-to-write-middleware-for-express-apps/)).
 
 ```javascript
 function (req, res, next) {
   var thread = req.thread
   // deal with emails in thread
+  next()
 }
 ```
 
@@ -173,6 +174,29 @@ myChannel.done(function(req, res, next) {
     + '.'
 })
 ```
+
+#### `res`: User defined variable, usable in all middlewares' functions
+
+`res` is used to store a object that is ready to be used by middlewares. It was initialized when a channel was constructed, and init as a fresh `res` for each gmail message in channel.
+
+"fresh" means that if you change `res`(or it's property) to the other value, it will be reset after this message had been processed. When you start to process the next gmail message, res will be re-inited as it first be defined.
+
+```javascript
+var myChannel = new GmailChannel({
+  res: {
+    data: 'used by middlewares'
+  }
+})
+```
+
+#### `next(err)`: call this to let the middleware chain continue.
+
+if a middleware called `next()`, then the next middleware will be called after this middleware return, 
+
+if `next()` is not called by a middleware, then the other middlewares will not be executed, they will all be skipped.
+
+if call `next(err)` with a param `err`, the `err` will be treated as a error message, and be stored in the array: `req.errors`.
+
 
 ## How to enable GmailChannel in your code<a name="library"></a>
 
