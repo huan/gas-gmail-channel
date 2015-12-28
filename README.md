@@ -191,11 +191,11 @@ var myChannel = new GmailChannel({
 
 #### `next(err)`: call this to let the middleware chain continue.
 
-if a middleware called `next()`, then the next middleware will be called after this middleware return, 
+If a middleware called `next()`, then the next middleware will be called after this middleware return, 
 
-if `next()` is not called by a middleware, then the other middlewares will not be executed, they will all be skipped.
+If `next()` is not called by a middleware, then the other middlewares will not be executed, they will all be skipped.
 
-if call `next(err)` with a param `err`, the `err` will be treated as a error message, and be stored in the array: `req.errors`.
+If call `next(err)` with a param `err`, the `err` will be treated as a error message, and be stored in the array: `req.errors`.
 
 
 ## How to enable GmailChannel in your code<a name="library"></a>
