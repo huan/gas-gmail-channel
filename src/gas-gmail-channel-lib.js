@@ -38,12 +38,12 @@ var GmailChannel = (function() {
   )
   
   testChannel.done(function(req, res, next) {
-    Logger.log('finalized all middlewares')
+    Logger.log('finalize after middlewares')
   })
   ```
   */
   
-  var VERSION = '0.1.0'
+  var VERSION = '0.2.0'
   
   var DEFAULT = {
     name: 'GmailChannel v' + VERSION
@@ -75,7 +75,6 @@ var GmailChannel = (function() {
     
     if (!options) throw Error('options must be defined for GmailChannel!')
     
-    var dayspan = options.dayspan || DEFAULT.dayspan
     var labels = options.labels || DEFAULT.labels
     var name = options.name || DEFAULT.name
     var res = options.res || DEFAULT.res   
@@ -84,18 +83,24 @@ var GmailChannel = (function() {
     
     /**
     *
-    * 1. if we don't set doneLabel, then it should be the default label name.
-    * 2. but if we set it to null, then we will not use doneLabel anymore.
+    * 1. if we don't set doneLabel/dayspan, then it should be the default label name.
+    * 2. but if we set it to null, then we will not use doneLabel/dayspan anymore.
     *
     * so we use "typeof options.doneLabel === 'undefined'" to check if use defined it.
     *
     */
     if ((typeof options.doneLabel)==='undefined') {
-      var doneLabel = DEFAULT.doneLabel
-      } else {
-        doneLabel = options.doneLabel
-      }
+      var doneLabel = DEFAULT.doneLabel;
+    } else {
+      doneLabel = options.doneLabel
+    }
     
+    if ((typeof options.dayspan)==='undefined') {
+      var dayspan = DEFAULT.dayspan;
+    } else {
+      dayspan = options.dayspan
+    }
+
     /**
     *
     * validation options input
@@ -114,9 +119,9 @@ var GmailChannel = (function() {
     // 1. query
     var queryString  = options.query || ''
     // 2. timespan
-    queryString += ' ' + 'newer_than:' + dayspan + 'd'
+    if (dayspan!==null) queryString += ' ' + 'newer_than:' + dayspan + 'd'
     // 3. -doneLabel
-    if (doneLabel) queryString += ' ' + '-label:' + doneLabel
+    if (doneLabel!==null) queryString += ' ' + '-label:' + doneLabel
     // 4. keywords
     keywords.forEach(function (k) {
       queryString += ' ' + k

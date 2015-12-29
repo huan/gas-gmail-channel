@@ -86,6 +86,28 @@ function gmailChannelTestRunner() {
       
     })
     
+    test('Query string with disable dapspan & doneLabel', function (t) {
+      
+      var EXPECTED_QUERY_STRING = ' 融资申请 最简单的创业计划书 '
+      + '-abcdefghijklmnopqrstuvwxyz -label:trash'
+      var testChannel = new GmailChannel({
+        keywords: [
+          '融资申请'
+          , '最简单的创业计划书'
+          , '-abcdefghijklmnopqrstuvwxyz'
+        ]
+        , labels: [
+          ''
+          , '-' + 'trash'
+        ]
+        , dayspan: null 
+        , query: ''
+        , doneLabel: null
+      })
+      t.equal(testChannel.getQueryString(), EXPECTED_QUERY_STRING, 'query string')
+      
+    })
+
     test('Class Constructor', function (t) {
       var EXPECTED_NAME = 'test channel'
       

@@ -86,6 +86,7 @@ About the parameters of constructor:
   - DEFAULT: `500` (maximum of gmail limitation)
 1. `dayspan`: Only process emails in the past `dayspan` days. 
   - DEFAULT: `365`
+  - set to `null` to DISABLE it.
 1. `doneLabel`: GmailChannel will only get out the emails without the `doneLabel`, and label them as `doneLabel` after processed them.
   - DEFAULT: `OutOfGmailChannel`
   - set to `null` to DISABLE it
