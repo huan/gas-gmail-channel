@@ -66,8 +66,7 @@ function gmailChannelTestRunner() {
     
     test('Query string', function (t) {
       
-      var EXPECTED_QUERY_STRING = ' newer_than:1d -label:OutOfGmailChannel 融资申请 最简单的创业计划书 '
-      + '-abcdefghijklmnopqrstuvwxyz -label:trash'
+      var EXPECTED_QUERY_STRING = ' newer_than:1d -label:OutOfGmailChannel "融资申请"  "最简单的创业计划书"  -"abcdefghijklmnopqrstuvwxyz"  -label:trash'
       var testChannel = new GmailChannel({
         keywords: [
           '融资申请'
@@ -88,8 +87,8 @@ function gmailChannelTestRunner() {
     
     test('Query string with disable dapspan & doneLabel', function (t) {
       
-      var EXPECTED_QUERY_STRING = ' 融资申请 最简单的创业计划书 '
-      + '-abcdefghijklmnopqrstuvwxyz -label:trash'
+      var EXPECTED_QUERY_STRING = ' "融资申请"  "最简单的创业计划书"  '
+      + '-"abcdefghijklmnopqrstuvwxyz"  -label:trash'
       var testChannel = new GmailChannel({
         keywords: [
           '融资申请'

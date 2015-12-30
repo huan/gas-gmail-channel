@@ -124,7 +124,16 @@ var GmailChannel = (function() {
     if (doneLabel!==null) queryString += ' ' + '-label:' + doneLabel
     // 4. keywords
     keywords.forEach(function (k) {
-      queryString += ' ' + k
+      if (!k) return
+      
+      var minusKeyword = /^-(.+)$/.exec(k)
+      if (/"/.test(k)) { // 1. keyword里面有引号(")
+        queryString += ' ' + k + ' '
+      } else if (minusKeyword) { // 2. keyword前面有减号(-)
+        queryString += ' ' + '-' + '"' + minusKeyword[1] + '" '
+      } else { // 3. 其他
+        queryString += ' ' +       '"' + k + '" '
+      }
     })
     // 5. labels
     labels.forEach(function (l) {
