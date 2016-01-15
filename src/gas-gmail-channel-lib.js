@@ -193,9 +193,14 @@ var GmailChannel = (function() {
     
     function use(middleware) {
       
-      if (middleware instanceof Array) return middleware.map(function (m) { return use(m) })
+      if (middleware instanceof Array) {
+        for (var i in middleware) {
+          if (!(middleware[i] instanceof Function)) throw Error('use(middleware[' + i + ']) is not function!');
+        }
+        return middleware.map(function (m) { return use(m) })
+      }
       
-      if (!(middleware instanceof Function)) throw Error('must use function(s) for middleware! error[' + middleware + ']')
+      if (!(middleware instanceof Function)) throw Error('must use function for middleware! error[' + middleware + ']')
       
       MIDDLEWARES.push(middleware)
       
