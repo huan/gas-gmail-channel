@@ -193,26 +193,40 @@ var GmailChannel = (function() {
     
     function use(middleware) {
       
+      /**
+      *
+      * 1. in case uf use([fn1, fn2, ...])
+      *
+      */
       if (middleware instanceof Array) {
         for (var i in middleware) {
           if (!(middleware[i] instanceof Function)) throw Error('use(middleware[' + i + ']) is not function!');
         }
         return middleware.map(function (m) { return use(m) })
       }
+
+      /**
+      *
+      * 2. in case of use(fn1, fn2, ...)
+      *
+      */
+      if (arguments.length>1) {
+        for (var i in arguments) {
+          if (!(arguments[i] instanceof Function)) throw Error('use(arguments[' + i + ']) is not function!');
+        }
+        return Array.prototype.map.call(arguments, function (m) { return use(m) })
+      }
+
+      /**
+      *
+      * 3. in case of use(fn)
+      *
+      */
       
       if (!(middleware instanceof Function)) throw Error('must use function for middleware! error[' + middleware + ']')
       
       MIDDLEWARES.push(middleware)
-      
-      /**
-      *
-      * in case of use(fn1, fn2....)
-      *
-      */
-      if (arguments.length>1) {
-        return Array.prototype.slice.call(arguments, 1).map(function (m) { return use(m) })
-      }
-      
+            
       return true
     }
     
