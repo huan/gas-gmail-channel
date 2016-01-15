@@ -86,6 +86,7 @@ About the parameters of constructor:
   - DEFAULT: `true` (thread mode)
 1. `limit`: Max number of email threads that channel will process. 
   - DEFAULT: `500` (maximum of gmail limitation)
+  - if conversation is off(false), limit is still set for threads. that means if we set limit to 1, and the mail message thread has 3 messages, the middleware will loop 3 times.
 1. `dayspan`: Only process emails in the past `dayspan` days. 
   - DEFAULT: `365`
   - set to `null` to DISABLE it.
