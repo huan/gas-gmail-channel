@@ -51,6 +51,7 @@ var GmailChannel = (function() {
     , dayspan: '365'   // only check in last 365 days
     , limit: 500       // default max return 999 threads
     , doneLabel: null
+    , conversation: true // conversation mode
     , keywords: []
     , res: JSON.parse('{}') // use {} directory will cause script editor indient error???
   }
@@ -68,6 +69,8 @@ var GmailChannel = (function() {
   *    options.query string gmail search query string
   *    options.dayspan number newer_than:{{dayspan}}d
   *    options.limit number no more then {{limit}} results
+  *
+  *    options.conversation `true` for deal with threads, `false` for deal with each messages. DEFAULT `true`
   *
   *    options.doneLabel message labeled with {{doneLabel}} will be ignored
   */
@@ -99,6 +102,12 @@ var GmailChannel = (function() {
       var dayspan = DEFAULT.dayspan;
     } else {
       dayspan = options.dayspan
+    }
+
+    if ((typeof options.conversation)==='undefined') {
+      var conversation = DEFAULT.conversation;
+    } else {
+      conversation = options.conversation
     }
 
     /**
@@ -165,6 +174,7 @@ var GmailChannel = (function() {
     
     var NAME = name
     var LIMIT = limit
+    var CONVERSATION = conversation
     var QUERY_STRING = queryString
     var RES = res
     var MIDDLEWARES = [] // for use() use
@@ -241,7 +251,7 @@ var GmailChannel = (function() {
     */
     function done(finalCallback) {
       
-      if (finalCallback && (!finalCallback instanceof Function)) throw Error('done need a function param to be finalCallback')
+      if (finalCallback && (!finalCallback instanceof Function)) throw Error('done() need param finalCallback to be a function')
       
       var mailThreads = getNewThreads(LIMIT)
       
@@ -249,50 +259,62 @@ var GmailChannel = (function() {
       
       for (var i=0; i<mailThreads.length; i++) {
         
-        /**
-        *
-        * re-init res & req
-        *
-        */
-        res = {}
-        copyKeys(res, RES)
+        var mailMessages = mailThreads[i].getMessages()
         
-        req = {
-          getChannelName: getName
-          , getThread: (function (t) { return function () { return t } })(mailThreads[i]) // closure for the furture possible run in nodejs, because of async call back
-          , errors: []
-          // , thread: mailThreads[i] // Deprecated
-        }        
-        
-        
-        for (var j=0; j<MIDDLEWARES.length; j++) {
+        for (var j=0; j<mailMessages.length; j++) {
+          /**
+          *
+          * re-init res & req
+          *
+          */
+          res = {}
+          copyKeys(res, RES)
           
-          var middleware = MIDDLEWARES[j]
+          req = {
+            getChannelName: getName
+            , getThread: (function (t) { return function () { return t } })(mailThreads[i]) // closure for the furture possible run in nodejs, because of async call back
+            , getMessage: (function (m) { return function () { return m } })(mailMessages[j]) 
+            , errors: []
+          }        
           
-          var isNextCalled = false
-          var error = undefined
           
-          try {
-            middleware(req, res, function (err) {
-              isNextCalled = true
-              error = err
-            })
-          } catch (e) {
-            error = e
-          }
+          for (var k=0; k<MIDDLEWARES.length; k++) {
+            
+            var middleware = MIDDLEWARES[k]
+            
+            var isNextCalled = false
+            var error = undefined
+            
+            try {
+              middleware(req, res, function (err) {
+                isNextCalled = true
+                error = err
+              })
+            } catch (e) {
+              error = e
+            }
+            
+            if (error) req.errors.push(error)
+            
+            if (!isNextCalled) {
+              // loop end, because middleware did not call next
+              break
+            }
+            
+          } // END for loop of MIDDLEWARES
           
-          if (error) req.errors.push(error)
+          if (finalCallback) finalCallback(req, res, function (err) { } )
           
-          if (!isNextCalled) {
-            // loop end, because middleware did not call next
-            break
-          }
+          if (DONE_LABEL) mailThreads[i].addLabel(DONE_LABEL);
           
-        } // END for loop of MIDDLEWARES
-        
-        if (finalCallback) finalCallback(req, res, function (err) { } )
-        
-        if (DONE_LABEL) mailThreads[i].addLabel(DONE_LABEL);
+          /**
+          *
+          * if we are in conversation mode, we call middleware function chains for each thread.
+          *
+          */
+          if (CONVERSATION) break;
+          
+        } // END for loop of mailMessages
         
       } // END for loop of mailThreads 
       

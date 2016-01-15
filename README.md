@@ -82,6 +82,8 @@ About the parameters of constructor:
   - DEFAULT: `[]`
 1. `labels`: Array. The labels that email should be labeled('-label' means NOT labeled).
   - DEFAULT: `['inbox', '-trash']`
+1. `conversation`: Bool. if set to `true`, call middlewares for each thread. if set to `false`, call middlewares for each message.
+  - DEFAULT: `true` (thread mode)
 1. `limit`: Max number of email threads that channel will process. 
   - DEFAULT: `500` (maximum of gmail limitation)
 1. `dayspan`: Only process emails in the past `dayspan` days. 
