@@ -179,6 +179,8 @@ var GmailChannel = (function() {
     var RES = res
     var MIDDLEWARES = [] // for use() use
     
+    var ERRORS = [] // for store next(errors) information
+    
     // UPPER_CASE variables set
     //
     ///////////////////////////////////////////////////////
@@ -274,7 +276,7 @@ var GmailChannel = (function() {
             getChannelName: getName
             , getThread: (function (t) { return function () { return t } })(mailThreads[i]) // closure for the furture possible run in nodejs, because of async call back
             , getMessage: (function (m) { return function () { return m } })(mailMessages[j]) 
-            , errors: []
+            , getErrors: function () { return ERRORS }
           }        
           
           
@@ -294,7 +296,7 @@ var GmailChannel = (function() {
               error = e
             }
             
-            if (error) req.errors.push(error)
+            if (error) ERRORS.push(error)
             
             if (!isNextCalled) {
               // loop end, because middleware did not call next

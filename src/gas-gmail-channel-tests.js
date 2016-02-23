@@ -175,8 +175,9 @@ function gmailChannelTestRunner() {
       
       var errNum, errMsg
       testChannel.done(function (req, res, next) {
-        errNum = req.errors.length
-        errMsg = req.errors[0]
+        var errors = req.getErrors()
+        errNum = errors.length
+        errMsg = errors[0]
       })
       t.equal(errNum, EXPECTED_ERROR_NUM, 'finallCallback got middleware error number')
       t.equal(errMsg, EXPECTED_ERROR_MSG, 'finallCallback got middleware error message')
