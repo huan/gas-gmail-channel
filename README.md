@@ -180,6 +180,16 @@ myChannel.done(function(req, res, next) {
 })
 ```
 
+#### `req.pushError(e)`: Record error from middlewares
+
+Record errors when we do not want to call next().
+
+```javascript
+myChannel.use(function(req, res, next) {
+  req.pushError('log error without call next()')
+})
+```
+
 #### `res`: User defined variable, usable in all middlewares' functions
 
 `res` is used to store a object that is ready to be used by middlewares. It was initialized when a channel was constructed, and init as a fresh `res` for each gmail message in channel.
@@ -231,6 +241,7 @@ The GmailChannel source code repository is hosted on GitHub. There you can file 
 
 ### v0.3.0 (February 24, 2015)
 * add req.getErrors() to replace req.errors array
+* add req.pushError(e) to record message without call next()
 
 ### v0.2.0 (December 25, 2015)
 * add done(finalizeCallback)

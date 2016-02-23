@@ -274,9 +274,11 @@ var GmailChannel = (function() {
           
           req = {
             getChannelName: getName
-            , getThread: (function (t) { return function () { return t } })(mailThreads[i]) // closure for the furture possible run in nodejs, because of async call back
+            , getThread:  (function (t) { return function () { return t } })(mailThreads[i]) // closure for the furture possible run in nodejs, because of async call back
             , getMessage: (function (m) { return function () { return m } })(mailMessages[j]) 
-            , getErrors: function () { return ERRORS }
+            
+            , getErrors: function ()  { return ERRORS }
+            , pushError: function (e) { ERRORS.push(e) }
           }        
           
           
