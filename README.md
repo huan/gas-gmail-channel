@@ -229,6 +229,9 @@ The GmailChannel source code repository is hosted on GitHub. There you can file 
 
 ## Version history
 
+### v0.3.0 (February 24, 2015)
+* add req.getErrors() to replace req.errors array
+
 ### v0.2.0 (December 25, 2015)
 * add done(finalizeCallback)
 * bug fix
