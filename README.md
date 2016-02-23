@@ -163,18 +163,19 @@ method `req.getThread()` return a [Class GmailThread](https://developers.google.
 
 method `req.getChannelName()` will return the current channel name.
 
-#### `req.errors`: Errors from middlewares
+#### `req.getErrors()`: Errors from middlewares
 
-req.errors is a array, which used to store middle errors.
+Return a errors array, which used to store middle errors.
 
-If a middleware throws a exception, or called next(err) with `err` param, then the error of exception, or the err param of next function, will be stored in req.errors.
+If a middleware throws a exception, or called next(err) with `err` param, then the error of exception, or the err param of next function, will be stored in this errors array.
 
 ```javascript
 myChannel.done(function(req, res, next) {
+  var errors = req.getErrors()
   Logger.log('there are '
-    + req.errors.length
+    + errors.length
     + ' errors total. they are: '
-    + req.errors.join(',')
+    + errors.join(',')
     + '.'
 })
 ```
@@ -199,7 +200,7 @@ If a middleware called `next()`, then the next middleware will be executed after
 
 If `next()` is not called by a middleware, then the other middlewares will not be executed, they will all be skipped.
 
-If call `next(err)` with a param `err`, the `err` will be treated as a error message, and be stored in the array: `req.errors`.
+If call `next(err)` with a param `err`, the `err` will be treated as a error message, and be stored in a array which can be retrieved by `req.getErrors()`.
 
 
 ## How to enable GmailChannel in your code<a name="library"></a>
