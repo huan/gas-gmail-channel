@@ -217,6 +217,11 @@ if ((typeof GmailChannel)==='undefined') { // GmailChannel Initialization. (only
 } // Class GmailChannel is ready for use now!
 ```
 
+### How to run tests?
+
+You can go to my develop environment(read only) to run, and feel free to clone it if you want. Follow this link: https://script.google.com/a/zixia.net/macros/d/Mta4oea1VMIugfSGRo4QrAnKRT9d30hqB/edit?uiv=2&mid=ACjPJvGt4gnXjJwXnToB0jIMEbSvqKUF6vH-uq-m59SqnjXqTQ03NDn_khlNE6ha_mPnrOAYEnyFk80nHYmt_hppO3AgDkO_vVLrYJXzcPPagwRromd0znfLreNFAu4p0rYTC-Jlo-sAKOM, then click `gas-gmail-channel-tests.gs` in file browser on the left.
+
+
 ## Support
 
 The GmailChannel source code repository is hosted on GitHub. There you can file bugs on the issue tracker or submit tested pull requests for review. ( https://github.com/zixia/gas-gmail-channel/issues )
