@@ -177,9 +177,9 @@ var GmailChannel = (function() {
     var CONVERSATION = conversation
     var QUERY_STRING = queryString
     var RES = res
-    var MIDDLEWARES = [] // for use() use
+    var MIDDLEWARES = [] // functions work for use()
     
-    var ERRORS = [] // for store next(errors) information
+    var ERRORS = [] // store next(error) information
     
     // UPPER_CASE variables set
     //
@@ -266,10 +266,12 @@ var GmailChannel = (function() {
         for (var j=0; j<mailMessages.length; j++) {
           /**
           *
-          * re-init res & req
+          * re-init ERRORS & res & req
           *
           */
-          res = {}
+          ERRORS = []
+
+          res = {}          
           copyKeys(res, RES)
           
           req = {
