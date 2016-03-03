@@ -137,6 +137,8 @@ myChannel.use(
 
 The parameter `cb` is optional, should be a middleware function, to finalize the loop. only one parameter is permited.
 
+Return number of how many times that the middlewares had been called.
+
 ```javascript
 myChannel.done(function(req, res, next) {
   Logger.log('finalize after middlewares')

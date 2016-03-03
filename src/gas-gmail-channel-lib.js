@@ -283,6 +283,8 @@ var GmailChannel = (function() {
             , pushError: function (e) { ERRORS.push(e) }
           }        
           
+          // Count for how many threads/messages we had dealed with
+          var counter = 0
           
           for (var k=0; k<MIDDLEWARES.length; k++) {
             
@@ -318,12 +320,14 @@ var GmailChannel = (function() {
           * if we are in conversation mode, we call middleware function chains for each thread.
           *
           */
+          counter++;
           if (CONVERSATION) break;
           
         } // END for loop of mailMessages
         
       } // END for loop of mailThreads 
       
+      return counter
     }
     
     function getName() { return NAME }

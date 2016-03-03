@@ -174,13 +174,14 @@ function gmailChannelTestRunner() {
       t.equal(testChannel.getMiddlewares().length, EXPECTED_MIDDLEWARES_NUM, 'num of middlewares function is 3')
       
       var errNum, errMsg
-      testChannel.done(function (req, res, next) {
+      var processedNum = testChannel.done(function (req, res, next) {
         var errors = req.getErrors()
         errNum = errors.length
         errMsg = errors[0]
       })
       t.equal(errNum, EXPECTED_ERROR_NUM, 'finallCallback got middleware error number')
       t.equal(errMsg, EXPECTED_ERROR_MSG, 'finallCallback got middleware error message')
+      t.equal(processedNum, 1, 'done() return counter 1')
       
       t.equal(COUNTER, 2, '1 next to 2, but 2 not next to 3')
       t.equal(REQ_DATA_GOTTEN, REQ_DATA_EXPECTED, 'req.data right')
