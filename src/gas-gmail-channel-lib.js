@@ -259,6 +259,9 @@ var GmailChannel = (function() {
       
       var res, req
       
+      // Count for how many times we called middlewares(threads/messages we had dealed with)
+      var counter = 0
+
       for (var i=0; i<mailThreads.length; i++) {
         
         var mailMessages = mailThreads[i].getMessages()
@@ -282,10 +285,7 @@ var GmailChannel = (function() {
             , getErrors: function ()  { return ERRORS }
             , pushError: function (e) { ERRORS.push(e) }
           }        
-          
-          // Count for how many threads/messages we had dealed with
-          var counter = 0
-          
+                    
           for (var k=0; k<MIDDLEWARES.length; k++) {
             
             var middleware = MIDDLEWARES[k]
@@ -315,12 +315,13 @@ var GmailChannel = (function() {
           
           if (DONE_LABEL) mailThreads[i].addLabel(DONE_LABEL);
           
+          counter++; // record we had run a set of middleware (procceed a mail message)
+          
           /**
           *
           * if we are in conversation mode, we call middleware function chains for each thread.
           *
           */
-          counter++;
           if (CONVERSATION) break;
           
         } // END for loop of mailMessages
