@@ -241,7 +241,7 @@ The GmailChannel source code repository is hosted on GitHub. There you can file 
 
 ## Version history
 
-### v0.3.0 (February 24, 2015)
+### v0.3.0 (February 24, 2016)
 * add req.getErrors() to replace req.errors array
 * add req.pushError(e) to record message without call next()
 
