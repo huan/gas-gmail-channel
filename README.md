@@ -145,6 +145,12 @@ myChannel.done(function(req, res, next) {
 })
 ```
 
+### `getQueryString()`: check search string
+
+`getQueryString()` return the search string in gmail used by this channel.
+
+You can test this query string in gmail for debug purpose.
+
 ### Middleware
 
 `Middleware` is a function that does the work. In GmailChannel, the middleware works very similar like [Express](http://expressjs.com/en/guide/using-middleware.html)(There's also a good article [here](https://stormpath.com/blog/how-to-write-middleware-for-express-apps/)).
