@@ -1,7 +1,7 @@
 # GmailChannel
 Pub/Sub &amp; Middleware framework for easy dealing with Gmails by Channel
 
-Github: https://github.com/zixia/gas-gmail-channel
+Github: https://github.com/huan/gas-gmail-channel
 
 Run in Google Apps Script, make life easier to classify and process emails in Gmail.
 
